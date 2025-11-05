@@ -1,0 +1,192 @@
+-------------------------------------------------------
+-- CREACIÓN DE BASE DE DATOS Y USUARIO
+-------------------------------------------------------
+
+CREATE DATABASE ProyectoSpotty;
+GO
+
+USE ProyectoSpotty;
+GO
+
+--CREATE LOGIN UserSpotty WITH PASSWORD = 'SpottyApp2025',
+--CHECK_POLICY = OFF,
+--CHECK_EXPIRATION = OFF;
+--GO
+
+--CREATE USER UserSpotty FOR LOGIN UserSpotty;
+--EXEC sp_addrolemember N'db_owner', N'UserSpotty';
+--GO
+
+-------------------------------------------------------
+-- SCHEMAS
+-------------------------------------------------------
+CREATE SCHEMA users;
+GO
+
+CREATE SCHEMA trade;
+GO
+
+CREATE SCHEMA parking;
+GO
+
+CREATE SCHEMA pay;
+GO
+
+-------------------------------------------------------
+-- USERS SCHEMA
+-------------------------------------------------------
+
+CREATE TABLE users.tblPersonas (
+    ID INT PRIMARY KEY,
+    Nombre NVARCHAR(100) NOT NULL,
+    Apellido NVARCHAR(100) NOT NULL,
+    Genero NVARCHAR(10),
+    Correo NVARCHAR(30) Unique NOT NULL,
+    Contrasenia NVArchar (200) NOT NULL
+);
+
+CREATE TABLE users.tblAdmins (
+    ID_Admin INT PRIMARY KEY,
+    Telefono NVARCHAR(20)
+    FOREIGN KEY (ID_Admin) REFERENCES users.tblPersonas(ID)
+);
+
+CREATE TABLE users.tblClientes (
+    ID_Cliente INT PRIMARY KEY,
+    Vehiculo NVARCHAR(100)
+    FOREIGN KEY (ID_Cliente) REFERENCES users.tblPersonas(ID)
+);
+
+CREATE TABLE users.tblRepresentantesCorporativos (
+    ID_Representante INT PRIMARY KEY,
+    Telefono NVARCHAR(20)
+     FOREIGN KEY (ID_Representante) REFERENCES users.tblPersonas(ID)
+);
+
+-------------------------------------------------------
+-- TRADE SCHEMA
+-------------------------------------------------------
+
+CREATE TABLE trade.tblComercios (
+    ID_Comercio INT IDENTITY(1,1) PRIMARY KEY,
+    Nombre NVARCHAR(150) NOT NULL,
+    RTN NVARCHAR(20),
+    DNI_Representante INT,
+    FOREIGN KEY (DNI_Representante) REFERENCES users.tblRepresentantesCorporativos(ID_Representante)
+);
+
+CREATE TABLE trade.tblSucursales (
+    ID_Sucursal INT IDENTITY(1,1) PRIMARY KEY,
+    Nombre NVARCHAR(150) NOT NULL,
+    Ubicacion NVARCHAR(255),
+    Espacios_Disponibles INT,
+    Espacios_Totales INT,
+    Precio_por_hora DECIMAL(10,2),
+    Precio_reserva DECIMAL(10,2),
+    Limite_Hora_Parqueo DECIMAL(10,2),
+    ID_Comercio INT NOT NULL,
+    FOREIGN KEY (ID_Comercio) REFERENCES trade.tblComercios(ID_Comercio)
+);
+
+CREATE TABLE trade.tblEventos (
+    ID_Evento INT IDENTITY(1,1) PRIMARY KEY,
+    Nombre NVARCHAR(150),
+    Fecha_Inicio DATETIME,
+    Precio_Parqueo DECIMAL(10,2),
+    Espacios_Disponibles INT,
+    Espacios_Totales INT,
+    Limite_Hora_Parqueo DECIMAL(10,2),
+    Fecha_Fin DATETIME,
+    ID_Sucursal INT,
+    FOREIGN KEY (ID_Sucursal) REFERENCES trade.tblSucursales(ID_Sucursal)
+);
+
+CREATE TABLE trade.tblFavoritos (
+    ID_Favorito INT IDENTITY(1,1) PRIMARY KEY,
+    ID_Usuario INT,
+    ID_Sucursal INT,
+    Fecha DATETIME DEFAULT GETDATE()
+);
+
+CREATE TABLE trade.tblComentarios (
+    ID_Comentario INT IDENTITY(1,1) PRIMARY KEY,
+    ID_Cliente INT NOT NULL,
+    ID_Sucursal INT NOT NULL,
+    Texto NVARCHAR(MAX),
+    Calificacion INT CHECK (Calificacion BETWEEN 1 AND 5),
+    Fecha DATETIME DEFAULT GETDATE(),
+    FOREIGN KEY (ID_Sucursal) REFERENCES trade.tblSucursales(ID_Sucursal),
+    FOREIGN KEY (ID_Cliente)REFERENCES users.tblClientes(ID_Cliente)
+);
+
+-------------------------------------------------------
+-- PARKING SCHEMA
+-------------------------------------------------------
+
+CREATE TABLE parking.tblEspacios_de_Parqueo (
+    ID_Espacio INT IDENTITY(1,1) PRIMARY KEY,
+    Codigo NVARCHAR(50),
+    Disponible BIT DEFAULT 1,
+    ID_Sucursal INT,
+    ID_Evento INT,
+    FOREIGN KEY (ID_Sucursal) REFERENCES trade.tblSucursales(ID_Sucursal),
+    FOREIGN KEY (ID_Evento) REFERENCES trade.tblEventos(ID_Evento)
+);
+
+CREATE TABLE parking.tblReservas (
+    ID_Reserva INT IDENTITY(1,1) PRIMARY KEY,
+    ID_Cliente INT NOT NULL,
+    ID_Espacio INT NOT NULL,
+    Hora_Inicio DATETIME NOT NULL,
+    Hora_Final DATETIME NOT NULL,
+    Estado NVARCHAR(20) CHECK (Estado IN ('activa','cancelada','finalizada')) DEFAULT 'activa',
+    Monto DECIMAL(10,2),
+    Fecha_de_creacion DATETIME DEFAULT GETDATE(),
+    Codigo_QR NVARCHAR(255),
+    FOREIGN KEY (ID_Cliente) REFERENCES users.tblClientes(ID_Cliente),
+    FOREIGN KEY (ID_Espacio) REFERENCES parking.tblEspacios_de_Parqueo(ID_Espacio)
+);
+
+CREATE TABLE parking.tblHistorial (
+    ID_Historial INT IDENTITY(1,1) PRIMARY KEY,
+    ID_Cliente INT,
+    ID_Reserva INT,
+    Accion NVARCHAR(100),
+    Fecha DATETIME DEFAULT GETDATE(),
+    FOREIGN KEY (ID_Cliente) REFERENCES users.tblClientes(ID_Cliente),
+    FOREIGN KEY (ID_Reserva) REFERENCES parking.tblReservas(ID_Reserva)
+);
+
+-------------------------------------------------------
+-- PAY SCHEMA
+-------------------------------------------------------
+
+CREATE TABLE pay.tblPagos (
+    ID_Pago INT IDENTITY(1,1) PRIMARY KEY,
+    ID_Reserva INT NOT NULL,
+    Metodo_Pago NVARCHAR(20) CHECK (Metodo_Pago IN ('paypal','tarjeta')),
+    Monto DECIMAL(10,2) NOT NULL,
+    Fecha_Pago DATETIME DEFAULT GETDATE(),
+    Estado NVARCHAR(20) CHECK (Estado IN ('exitoso','pendiente','fallido')) DEFAULT 'pendiente',
+    CVV NVARCHAR(5),
+    FOREIGN KEY (ID_Reserva) REFERENCES parking.tblReservas(ID_Reserva)
+);
+GO
+
+
+-- Tabla de categorías para filtros
+CREATE TABLE trade.tblCategorias (
+    ID_Categoria INT IDENTITY(1,1) PRIMARY KEY,
+    Nombre NVARCHAR(50) NOT NULL, -- 'Centro Comercial', 'Universidad', etc.
+    Descripcion NVARCHAR(255)
+);
+
+-- Relación sucursal-categoría
+CREATE TABLE trade.tblSucursalCategorias (
+    ID_CategoriaXSucursal INT IDENTITY(1,1) PRIMARY KEY,
+    ID_Sucursal INT,
+    ID_Categoria INT,
+    
+    FOREIGN KEY (ID_Sucursal) REFERENCES trade.tblSucursales(ID_Sucursal),
+    FOREIGN KEY (ID_Categoria) REFERENCES trade.tblCategorias(ID_Categoria)
+);
