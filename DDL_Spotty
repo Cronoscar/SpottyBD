@@ -8,14 +8,15 @@ GO
 USE ProyectoSpotty;
 GO
 
---CREATE LOGIN UserSpotty WITH PASSWORD = 'SpottyApp2025',
+--CREATE LOGIN proyectospotty WITH PASSWORD = 'spotty',
 --CHECK_POLICY = OFF,
 --CHECK_EXPIRATION = OFF;
 --GO
 
---CREATE USER UserSpotty FOR LOGIN UserSpotty;
---EXEC sp_addrolemember N'db_owner', N'UserSpotty';
+--CREATE USER proyectospotty FOR LOGIN proyectospotty;
+--EXEC sp_addrolemember N'db_owner', N'proyectospotty';
 --GO
+
 
 -------------------------------------------------------
 -- SCHEMAS
