@@ -43,7 +43,8 @@ CREATE TABLE users.tblPersonas (
     Apellido NVARCHAR(100) NOT NULL,
     Genero NVARCHAR(10),
     Correo NVARCHAR(30) Unique NOT NULL,
-    Contrasenia NVArchar (200) NOT NULL
+    Contrasenia NVArchar (200) NOT NULL,
+    Activo BIT NOT NULL DEFAULT 1,
 );
 
 CREATE TABLE users.tblAdmins (
