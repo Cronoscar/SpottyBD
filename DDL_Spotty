@@ -83,9 +83,8 @@ CREATE TABLE trade.tblSucursales (
     Nombre NVARCHAR(150) NOT NULL,
     Ubicacion NVARCHAR(255),
     Espacios_Disponibles INT,
+    Precio_Parqueo DECIMAL(10,2),
     Espacios_Totales INT,
-    Precio_por_hora DECIMAL(10,2),
-    Precio_reserva DECIMAL(10,2),
     Limite_Hora_Parqueo DECIMAL(10,2),
     ID_Comercio INT NOT NULL,
     FOREIGN KEY (ID_Comercio) REFERENCES trade.tblComercios(ID_Comercio)
