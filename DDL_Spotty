@@ -74,6 +74,7 @@ CREATE TABLE trade.tblComercios (
     Nombre NVARCHAR(150) NOT NULL,
     RTN NVARCHAR(20),
     DNI_Representante INT,
+    Activo BIT NOT NULL DEFAULT 1,
     FOREIGN KEY (DNI_Representante) REFERENCES users.tblRepresentantesCorporativos(ID_Representante)
 );
 
