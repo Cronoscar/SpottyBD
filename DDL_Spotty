@@ -87,6 +87,7 @@ CREATE TABLE trade.tblSucursales (
     Espacios_Totales INT,
     Limite_Hora_Parqueo DECIMAL(10,2),
     ID_Comercio INT NOT NULL,
+    Activo BIT NOT NULL DEFAULT 1,
     FOREIGN KEY (ID_Comercio) REFERENCES trade.tblComercios(ID_Comercio)
 );
 
