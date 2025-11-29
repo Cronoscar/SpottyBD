@@ -1,35 +1,39 @@
-USE ProyectoSpotty;
-GO
+-- USE ProyectoSpotty;
+-- GO
 
 -------------------------------------------------------
 -- DML - USERS SCHEMA
 -------------------------------------------------------
 
 -- Personas
-INSERT INTO users.tblPersonas (ID, Nombre, Apellido, Genero, Correo, Contrasenia)
+INSERT INTO users.tblPersonas (Nombre, Apellido, Genero, Correo, Salt, Contrasenia)
 VALUES
-(1, 'Oscar', 'Euceda', 'Masculino', 'oscar@spotty.com', '1234'),
-(2, 'Valeria', 'Suazo', 'Femenino', 'valeria@spotty.com', '1234'),
-(3, 'Juan', 'Martínez', 'Masculino', 'juan@spotty.com', '1234'),
-(4, 'María', 'López', 'Femenino', 'maria@spotty.com', '1234'),
-(5, 'Carlos', 'Mendoza', 'Masculino', 'carlos@spotty.com', '1234');
+('Oscar', 'Euceda', 'Masculino', 'oscar@spotty.com','$2b$10$s35N4Z6z3Ci2.IYh59lu8.','$2b$10$s35N4Z6z3Ci2.IYh59lu8.PN9pLO2Iy7xYzaGNrH9C9d6/s7v81qe'),
+('Valeria', 'Suazo', 'Femenino', 'valeria@spotty.com','$2b$10$s35N4Z6z3Ci2.IYh59lu8.','$2b$10$s35N4Z6z3Ci2.IYh59lu8.PN9pLO2Iy7xYzaGNrH9C9d6/s7v81qe'),
+('Juan', 'Martínez', 'Masculino', 'juan@spotty.com','$2b$10$s35N4Z6z3Ci2.IYh59lu8.','$2b$10$s35N4Z6z3Ci2.IYh59lu8.PN9pLO2Iy7xYzaGNrH9C9d6/s7v81qe'),
+('María', 'López', 'Femenino', 'maria@spotty.com','$2b$10$s35N4Z6z3Ci2.IYh59lu8.','$2b$10$s35N4Z6z3Ci2.IYh59lu8.PN9pLO2Iy7xYzaGNrH9C9d6/s7v81qe'),
+('Carlos', 'Mendoza', 'Masculino', 'carlos@spotty.com','$2b$10$s35N4Z6z3Ci2.IYh59lu8.','$2b$10$s35N4Z6z3Ci2.IYh59lu8.PN9pLO2Iy7xYzaGNrH9C9d6/s7v81qe');
+GO
 
 -- Admin
 INSERT INTO users.tblAdmins (ID_Admin, Telefono)
 VALUES
 (1, '9999-1111');
+GO
 
 -- Clientes
 INSERT INTO users.tblClientes (ID_Cliente, Vehiculo)
 VALUES
 (2, 'Toyota Yaris'),
 (3, 'Kia Rio');
+GO
 
 -- Representantes corporativos
 INSERT INTO users.tblRepresentantesCorporativos (ID_Representante, Telefono)
 VALUES
 (4, '9999-2222'),
 (5, '9999-3333');
+GO
 
 -------------------------------------------------------
 -- DML - TRADE SCHEMA
@@ -41,6 +45,7 @@ VALUES
 ('Mall Multiplaza', '08011999123456', 4),
 ('Aeropuerto Palmerola', '08011999005432', 5),
 ('Universidad Católica', '08011999006789', 4);
+GO
 
 -- Categorías
 INSERT INTO trade.tblCategorias (Nombre, Descripcion)
@@ -50,71 +55,71 @@ VALUES
 ('Universidad', 'Campus con parqueos disponibles'),
 ('Restaurante', 'Parqueo privado para clientes'),
 ('Hospital', 'Parqueo para visitantes y personal médico');
-
--- Sucursales
-INSERT INTO trade.tblSucursales (Nombre, Ubicacion, Espacios_Disponibles, Espacios_Totales, Precio_por_hora, Precio_reserva, Limite_Hora_Parqueo, ID_Comercio)
+GO
+-- Sucursales fix
+INSERT INTO trade.tblSucursales (Nombre, Ubicacion, Espacios_Disponibles, Precio_Parqueo, Espacios_Totales, Limite_Hora_Parqueo, ID_Comercio)
 VALUES
-('Sucursal Norte', 'Boulevard Suyapa, Tegucigalpa', 40, 50, 25.00, 60.00, 4.00, 1),
-('Sucursal Aeropuerto', 'Palmerola, Comayagua', 55, 60, 30.00, 70.00, 6.00, 2),
-('Sucursal UCA', 'Colonia Kennedy, Tegucigalpa', 20, 25, 15.00, 30.00, 3.00, 3);
-
+('Sucursal Norte', 'Boulevard Suyapa, Tegucigalpa', 40, 50, 25.00, 4.00, 1),
+('Sucursal Aeropuerto', 'Palmerola, Comayagua', 55, 60, 30.00, 6.00, 2),
+('Sucursal UCA', 'Colonia Kennedy, Tegucigalpa', 20, 25, 30.00, 3.00, 3);
+GO
 -- Relación Sucursal-Categoría
 INSERT INTO trade.tblSucursalCategorias (ID_Sucursal, ID_Categoria)
 VALUES
 (1, 1), -- Multiplaza - Centro Comercial
 (2, 2), -- Palmerola - Aeropuerto
 (3, 3); -- UCA - Universidad
-
+GO
 -- Eventos
 INSERT INTO trade.tblEventos (Nombre, Fecha_Inicio, Precio_Parqueo, Espacios_Disponibles, Espacios_Totales, Limite_Hora_Parqueo, Fecha_Fin, ID_Sucursal)
 VALUES
 ('Black Friday', '2025-11-25 06:00', 40.00, 30, 50, 6.00, '2025-11-25 22:00', 1),
 ('Festival Aéreo', '2025-12-10 08:00', 60.00, 40, 60, 8.00, '2025-12-10 20:00', 2);
-
+GO
 -- Favoritos
 INSERT INTO trade.tblFavoritos (ID_Usuario, ID_Sucursal)
 VALUES
 (2, 1),
 (3, 2);
-
+GO
 -- Comentarios
 INSERT INTO trade.tblComentarios (ID_Cliente, ID_Sucursal, Texto, Calificacion)
 VALUES
 (2, 1, 'Excelente ubicación y buen servicio.', 5),
 (3, 2, 'Buen espacio pero algo caro.', 4);
-
+GO
 -------------------------------------------------------
 -- DML - PARKING SCHEMA
 -------------------------------------------------------
 
--- Espacios de Parqueo
+-- Espacios de Parqueo-fix
 INSERT INTO parking.tblEspacios_de_Parqueo (Codigo, Disponible, ID_Sucursal, ID_Evento)
 VALUES
 ('A-101', 1, 1, 1),
 ('A-102', 1, 1, 1),
 ('B-201', 1, 2, 2),
 ('C-301', 1, 3, NULL);
-
--- Reservas
+GO
+-- Reservas-fix
 INSERT INTO parking.tblReservas (ID_Cliente, ID_Espacio, Hora_Inicio, Hora_Final, Estado, Monto, Codigo_QR)
 VALUES
 (2, 1, '2025-11-25 08:00', '2025-11-25 12:00', 'activa', 100.00, 'QR001'),
 (3, 3, '2025-12-10 09:00', '2025-12-10 13:00', 'activa', 120.00, 'QR002');
+GO
 
--- Historial
+-- Historial-fix
 INSERT INTO parking.tblHistorial (ID_Cliente, ID_Reserva, Accion)
 VALUES
 (2, 1, 'Reserva creada con éxito'),
 (3, 2, 'Reserva confirmada');
-
+GO
 -------------------------------------------------------
 -- DML - PAY SCHEMA
 -------------------------------------------------------
 
--- Pagos
+-- Pagos-fix
 INSERT INTO pay.tblPagos (ID_Reserva, Metodo_Pago, Monto, Estado, CVV)
 VALUES
 (1, 'tarjeta', 100.00, 'exitoso', '123'),
 (2, 'paypal', 120.00, 'pendiente', NULL);
-
 GO

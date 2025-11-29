@@ -2,11 +2,11 @@
 -- CREACIÓN DE BASE DE DATOS Y USUARIO
 -------------------------------------------------------
 
-CREATE DATABASE ProyectoSpotty;
-GO
+-- CREATE DATABASE ProyectoSpotty;
+-- GO
 
-USE ProyectoSpotty;
-GO
+-- USE ProyectoSpotty;
+-- GO
 
 --CREATE LOGIN proyectospotty WITH PASSWORD = 'spotty',
 --CHECK_POLICY = OFF,
@@ -38,33 +38,38 @@ GO
 -------------------------------------------------------
 
 CREATE TABLE users.tblPersonas (
-    ID INT PRIMARY KEY,
+    ID INT IDENTITY(1,1) PRIMARY KEY,
     Nombre NVARCHAR(100) NOT NULL,
     Apellido NVARCHAR(100) NOT NULL,
     Genero NVARCHAR(10),
     Correo NVARCHAR(30) Unique NOT NULL,
-    Contrasenia NVArchar (200) NOT NULL,
+    Salt NVARCHAR(255) NOT NULL,
+    Contrasenia NVArchar (255) NOT NULL,
+    Token NVARCHAR(255),
     Activo BIT NOT NULL DEFAULT 1,
 );
+GO
 
 CREATE TABLE users.tblAdmins (
     ID_Admin INT PRIMARY KEY,
     Telefono NVARCHAR(20)
     FOREIGN KEY (ID_Admin) REFERENCES users.tblPersonas(ID)
 );
+GO
 
 CREATE TABLE users.tblClientes (
     ID_Cliente INT PRIMARY KEY,
     Vehiculo NVARCHAR(100)
     FOREIGN KEY (ID_Cliente) REFERENCES users.tblPersonas(ID)
 );
+GO
 
 CREATE TABLE users.tblRepresentantesCorporativos (
     ID_Representante INT PRIMARY KEY,
     Telefono NVARCHAR(20)
-     FOREIGN KEY (ID_Representante) REFERENCES users.tblPersonas(ID)
+    FOREIGN KEY (ID_Representante) REFERENCES users.tblPersonas(ID)
 );
-
+GO
 -------------------------------------------------------
 -- TRADE SCHEMA
 -------------------------------------------------------
@@ -77,6 +82,7 @@ CREATE TABLE trade.tblComercios (
     Activo BIT NOT NULL DEFAULT 1,
     FOREIGN KEY (DNI_Representante) REFERENCES users.tblRepresentantesCorporativos(ID_Representante)
 );
+GO
 
 CREATE TABLE trade.tblSucursales (
     ID_Sucursal INT IDENTITY(1,1) PRIMARY KEY,
@@ -90,6 +96,7 @@ CREATE TABLE trade.tblSucursales (
     Activo BIT NOT NULL DEFAULT 1,
     FOREIGN KEY (ID_Comercio) REFERENCES trade.tblComercios(ID_Comercio)
 );
+GO
 
 CREATE TABLE trade.tblEventos (
     ID_Evento INT IDENTITY(1,1) PRIMARY KEY,
@@ -103,6 +110,7 @@ CREATE TABLE trade.tblEventos (
     ID_Sucursal INT,
     FOREIGN KEY (ID_Sucursal) REFERENCES trade.tblSucursales(ID_Sucursal)
 );
+GO
 
 CREATE TABLE trade.tblFavoritos (
     ID_Favorito INT IDENTITY(1,1) PRIMARY KEY,
@@ -110,6 +118,7 @@ CREATE TABLE trade.tblFavoritos (
     ID_Sucursal INT,
     Fecha DATETIME DEFAULT GETDATE()
 );
+GO
 
 CREATE TABLE trade.tblComentarios (
     ID_Comentario INT IDENTITY(1,1) PRIMARY KEY,
@@ -121,6 +130,7 @@ CREATE TABLE trade.tblComentarios (
     FOREIGN KEY (ID_Sucursal) REFERENCES trade.tblSucursales(ID_Sucursal),
     FOREIGN KEY (ID_Cliente)REFERENCES users.tblClientes(ID_Cliente)
 );
+GO
 
 -------------------------------------------------------
 -- PARKING SCHEMA
@@ -135,6 +145,7 @@ CREATE TABLE parking.tblEspacios_de_Parqueo (
     FOREIGN KEY (ID_Sucursal) REFERENCES trade.tblSucursales(ID_Sucursal),
     FOREIGN KEY (ID_Evento) REFERENCES trade.tblEventos(ID_Evento)
 );
+GO 
 
 CREATE TABLE parking.tblReservas (
     ID_Reserva INT IDENTITY(1,1) PRIMARY KEY,
@@ -149,6 +160,7 @@ CREATE TABLE parking.tblReservas (
     FOREIGN KEY (ID_Cliente) REFERENCES users.tblClientes(ID_Cliente),
     FOREIGN KEY (ID_Espacio) REFERENCES parking.tblEspacios_de_Parqueo(ID_Espacio)
 );
+GO 
 
 CREATE TABLE parking.tblHistorial (
     ID_Historial INT IDENTITY(1,1) PRIMARY KEY,
@@ -159,7 +171,7 @@ CREATE TABLE parking.tblHistorial (
     FOREIGN KEY (ID_Cliente) REFERENCES users.tblClientes(ID_Cliente),
     FOREIGN KEY (ID_Reserva) REFERENCES parking.tblReservas(ID_Reserva)
 );
-
+GO 
 -------------------------------------------------------
 -- PAY SCHEMA
 -------------------------------------------------------
@@ -183,13 +195,35 @@ CREATE TABLE trade.tblCategorias (
     Nombre NVARCHAR(50) NOT NULL, -- 'Centro Comercial', 'Universidad', etc.
     Descripcion NVARCHAR(255)
 );
+GO
 
 -- Relación sucursal-categoría
 CREATE TABLE trade.tblSucursalCategorias (
     ID_CategoriaXSucursal INT IDENTITY(1,1) PRIMARY KEY,
     ID_Sucursal INT,
     ID_Categoria INT,
-    
     FOREIGN KEY (ID_Sucursal) REFERENCES trade.tblSucursales(ID_Sucursal),
     FOREIGN KEY (ID_Categoria) REFERENCES trade.tblCategorias(ID_Categoria)
 );
+GO
+
+-- DROP TABLE pay.tblPagos;
+
+-- DROP TABLE parking.tblHistorial;
+-- DROP TABLE parking.tblReservas;
+-- DROP TABLE parking.tblEspacios_de_Parqueo;
+
+-- DROP TABLE trade.tblComentarios;
+-- DROP TABLE trade.tblFavoritos;
+-- DROP TABLE trade.tblSucursalCategorias;
+-- DROP TABLE trade.tblCategorias;
+-- DROP TABLE trade.tblEventos;
+-- DROP TABLE trade.tblSucursales;
+-- GO
+
+-- DROP TABLE users.tblRepresentantesCorporativos;
+-- DROP TABLE users.tblClientes;
+-- DROP TABLE users.tblAdmins;
+
+-- DROP TABLE trade.tblComercios;
+-- DROP TABLE users.tblPersonas;
