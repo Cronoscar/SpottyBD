@@ -227,3 +227,5 @@ GO
 
 -- DROP TABLE trade.tblComercios;
 -- DROP TABLE users.tblPersonas;
+
+-- DBCC CHECKIDENT ('tblPersonas', RESEED, 0);
