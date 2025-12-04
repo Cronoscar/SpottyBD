@@ -57,11 +57,11 @@ VALUES
 ('Hospital', 'Parqueo para visitantes y personal médico');
 GO
 -- Sucursales
-INSERT INTO trade.tblSucursales (Nombre, Ubicacion, Espacios_Disponibles, Precio_Parqueo, Espacios_Totales, Limite_Hora_Parqueo, ID_Comercio)
+INSERT INTO trade.tblSucursales (Nombre, Ubicacion, Espacios_Disponibles, Precio_Parqueo, Espacios_Totales, Limite_Hora_Parqueo, Imagen, ID_Comercio)
 VALUES
-('Sucursal Norte', 'Boulevard Suyapa, Tegucigalpa', 40, 50, 25.00, 4.00, 1),
-('Sucursal Aeropuerto', 'Palmerola, Comayagua', 55, 60, 30.00, 6.00, 2),
-('Sucursal UCA', 'Colonia Kennedy, Tegucigalpa', 20, 25, 30.00, 3.00, 3);
+('Sucursal Norte', 'Boulevard Suyapa, Tegucigalpa', 40, 50, 25.00, 4.00, 'https://imgur.com/RD3nLYG',1),
+('Sucursal Aeropuerto', 'Palmerola, Comayagua', 55, 60, 30.00, 6.00, 'https://imgur.com/YRzwIJe',2),
+('Sucursal UCA', 'Colonia Kennedy, Tegucigalpa', 20, 25, 30.00, 3.00, 'https://imgur.com/tNFaRFU',3);
 GO
 -- Relación Sucursal-Categoría
 INSERT INTO trade.tblSucursalCategorias (ID_Sucursal, ID_Categoria)
